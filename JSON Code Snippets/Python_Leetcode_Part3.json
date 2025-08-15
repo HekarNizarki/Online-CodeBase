@@ -1,0 +1,104 @@
+{
+    "Python_Leetcode_with_code": [
+        {
+            "title": "Median of Two Sorted Arrays",
+            "code": "def findMedianSortedArrays(nums1,nums2):\n    merged=sorted(nums1+nums2)\n    n=len(merged)\n    if n%2==0:\n        return (merged[n//2-1]+merged[n//2])/2\n    else:\n        return merged[n//2]"
+        },
+        {
+            "title": "Regular Expression Matching",
+            "code": "def isMatch(s,p):\n    if not p:\n        return not s\n    first_match=bool(s) and p[0] in {s[0],'.'}\n    if len(p)>=2 and p[1]=='*':\n        return isMatch(s,p[2:]) or (first_match and isMatch(s[1:],p))\n    else:\n        return first_match and isMatch(s[1:],p[1:])"
+        },
+        {
+            "title": "Merge k Sorted Lists",
+            "code": "import heapq\n\nclass ListNode:\n    def __init__(self,val=0,next=None):\n        self.val=val\n        self.next=next\n\ndef mergeKLists(lists):\n    heap=[]\n    for l in lists:\n        while l:\n            heapq.heappush(heap,l.val)\n            l=l.next\n    dummy=ListNode()\n    current=dummy\n    while heap:\n        current.next=ListNode(heapq.heappop(heap))\n        current=current.next\n    return dummy.next"
+        },
+        {
+            "title": "Reverse Nodes in k-Group",
+            "code": "class ListNode:\n    def __init__(self,val=0,next=None):\n        self.val=val\n        self.next=next\n\ndef reverseKGroup(head,k):\n    def reverse(head,k):\n        prev,curr=None,head\n        while k>0:\n            next_node=curr.next\n            curr.next=prev\n            prev=curr\n            curr=next_node\n            k-=1\n        return prev\n    count=0\n    curr=head\n    while curr and count<k:\n        curr=curr.next\n        count+=1\n    if count==k:\n        reversed_head=reverse(head,k)\n        head.next=reverseKGroup(curr,k)\n        return reversed_head\n    return head"
+        },
+        {
+            "title": "Trapping Rain Water",
+            "code": "def trap(height):\n    if not height:\n        return 0\n    left,right=0,len(height)-1\n    left_max,right_max=height[left],height[right]\n    water=0\n    while left<right:\n        if left_max<right_max:\n            left+=1\n            left_max=max(left_max,height[left])\n            water+=left_max-height[left]\n        else:\n            right-=1\n            right_max=max(right_max,height[right])\n            water+=right_max-height[right]\n    return water"
+        },
+        {
+            "title": "Wildcard Matching",
+            "code": "def isMatch(s,p):\n    dp=[[False]*(len(p)+1) for _ in range(len(s)+1)]\n    dp[0][0]=True\n    for j in range(1,len(p)+1):\n        if p[j-1]=='*':\n            dp[0][j]=dp[0][j-1]\n    for i in range(1,len(s)+1):\n        for j in range(1,len(p)+1):\n            if p[j-1]=='*':\n                dp[i][j]=dp[i-1][j] or dp[i][j-1]\n            elif p[j-1]=='?' or s[i-1]==p[j-1]:\n                dp[i][j]=dp[i-1][j-1]\n    return dp[-1][-1]"
+        },
+        {
+            "title": "Longest Valid Parentheses",
+            "code": "def longestValidParentheses(s):\n    stack=[-1]\n    max_length=0\n    for i in range(len(s)):\n        if s[i]=='(':\n            stack.append(i)\n        else:\n            stack.pop()\n            if not stack:\n                stack.append(i)\n            else:\n                max_length=max(max_length,i-stack[-1])\n    return max_length"
+        },
+        {
+            "title": "Minimum Window Substring",
+            "code": "def minWindow(s,t):\n    from collections import Counter\n    target_counts=Counter(t)\n    required=len(target_counts)\n    formed=0\n    window_counts={}\n    left=right=0\n    min_length=float('inf')\n    result=''\n    while right<len(s):\n        char=s[right]\n        window_counts[char]=window_counts.get(char,0)+1\n        if char in target_counts and window_counts[char]==target_counts[char]:\n            formed+=1\n        while left<=right and formed==required:\n            char=s[left]\n            if right-left+1<min_length:\n                min_length=right-left+1\n                result=s[left:right+1]\n            window_counts[char]-=1\n            if char in target_counts and window_counts[char]<target_counts[char]:\n                formed-=1\n            left+=1\n        right+=1\n    return result"
+        },
+        {
+            "title": "Edit Distance",
+            "code": "def minDistance(word1,word2):\n    m,n=len(word1),len(word2)\n    dp=[[0]*(n+1) for _ in range(m+1)]\n    for i in range(m+1):\n        dp[i][0]=i\n    for j in range(n+1):\n        dp[0][j]=j\n    for i in range(1,m+1):\n        for j in range(1,n+1):\n            if word1[i-1]==word2[j-1]:\n                dp[i][j]=dp[i-1][j-1]\n            else:\n                dp[i][j]=1+min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])\n    return dp[m][n]"
+        },
+        {
+            "title": "Largest Rectangle in Histogram",
+            "code": "def largestRectangleArea(heights):\n    stack=[]\n    max_area=0\n    for i,h in enumerate(heights):\n        while stack and h<heights[stack[-1]]:\n            height=heights[stack.pop()]\n            width=i if not stack else i-stack[-1]-1\n            max_area=max(max_area,height*width)\n        stack.append(i)\n    while stack:\n        height=heights[stack.pop()]\n        width=len(heights) if not stack else len(heights)-stack[-1]-1\n        max_area=max(max_area,height*width)\n    return max_area"
+        },
+        {
+            "title": "Maximal Rectangle",
+            "code": "def maximalRectangle(matrix):\n    if not matrix:\n        return 0\n    max_area=0\n    dp=[0]*len(matrix[0])\n    for row in matrix:\n        for j in range(len(row)):\n            dp[j]=dp[j]+1 if row[j]=='1' else 0\n        stack=[]\n        for i,h in enumerate(dp+[0]):\n            while stack and h<dp[stack[-1]]:\n                height=dp[stack.pop()]\n                width=i if not stack else i-stack[-1]-1\n                max_area=max(max_area,height*width)\n            stack.append(i)\n    return max_area"
+        },
+        {
+            "title": "Binary Tree Maximum Path Sum",
+            "code": "class TreeNode:\n    def __init__(self,val=0,left=None,right=None):\n        self.val=val\n        self.left=left\n        self.right=right\n\ndef maxPathSum(root):\n    def helper(node):\n        nonlocal max_sum\n        if not node:\n            return 0\n        left=max(helper(node.left),0)\n        right=max(helper(node.right),0)\n        max_sum=max(max_sum,left+right+node.val)\n        return max(left,right)+node.val\n    max_sum=float('-inf')\n    helper(root)\n    return max_sum"
+        },
+        {
+            "title": "Word Ladder II",
+            "code": "def findLadders(beginWord,endWord,wordList):\n    from collections import defaultdict,deque\n    wordList=set(wordList)\n    if endWord not in wordList:\n        return []\n    graph=defaultdict(list)\n    queue=deque([beginWord])\n    found=False\n    while queue and not found:\n        level_size=len(queue)\n        visited=set()\n        for _ in range(level_size):\n            word=queue.popleft()\n            for i in range(len(word)):\n                for c in 'abcdefghijklmnopqrstuvwxyz':\n                    new_word=word[:i]+c+word[i+1:]\n                    if new_word==endWord:\n                        found=True\n                    if new_word in wordList:\n                        visited.add(new_word)\n                        graph[word].append(new_word)\n        for word in visited:\n            wordList.remove(word)\n            queue.append(word)\n    result=[]\n    def backtrack(word,path):\n        if word==endWord:\n            result.append(path)\n            return\n        for neighbor in graph[word]:\n            backtrack(neighbor,path+[neighbor])\n    backtrack(beginWord,[beginWord])\n    return result"
+        },
+        {
+            "title": "Serialize and Deserialize Binary Tree",
+            "code": "class TreeNode:\n    def __init__(self,val=0,left=None,right=None):\n        self.val=val\n        self.left=left\n        self.right=right\n\nclass Codec:\n    def serialize(self,root):\n        def helper(node):\n            if not node:\n                return 'None,'\n            return str(node.val)+','+helper(node.left)+helper(node.right)\n        return helper(root)\n    def deserialize(self,data):\n        def helper(nodes):\n            val=next(nodes)\n            if val=='None':\n                return None\n            node=TreeNode(int(val))\n            node.left=helper(nodes)\n            node.right=helper(nodes)\n            return node\n        nodes=iter(data.split(','))\n        return helper(nodes)"
+        },
+        {
+            "title": "Sliding Window Maximum",
+            "code": "def maxSlidingWindow(nums,k):\n    from collections import deque\n    q=deque()\n    result=[]\n    for i,num in enumerate(nums):\n        while q and nums[q[-1]]<num:\n            q.pop()\n        q.append(i)\n        if q[0]==i-k:\n            q.popleft()\n        if i>=k-1:\n            result.append(nums[q[0]])\n    return result"
+        },
+        {
+            "title": "Burst Balloons",
+            "code": "def maxCoins(nums):\n    nums=[1]+nums+[1]\n    n=len(nums)\n    dp=[[0]*n for _ in range(n)]\n    for length in range(2,n):\n        for left in range(n-length):\n            right=left+length\n            for i in range(left+1,right):\n                dp[left][right]=max(dp[left][right],nums[left]*nums[i]*nums[right]+dp[left][i]+dp[i][right])\n    return dp[0][n-1]"
+        },
+        {
+            "title": "Count of Smaller Numbers After Self",
+            "code": "def countSmaller(nums):\n    def merge_sort(enums):\n        if len(enums)<=1:\n            return enums\n        mid=len(enums)//2\n        left=merge_sort(enums[:mid])\n        right=merge_sort(enums[mid:])\n        merged=[]\n        i=j=0\n        while i<len(left) and j<len(right):\n            if left[i][1]<=right[j][1]:\n                merged.append(left[i])\n                counts[left[i][0]]+=j\n                i+=1\n            else:\n                merged.append(right[j])\n                j+=1\n        merged.extend(left[i:])\n        for k in range(i,len(left)):\n            counts[left[k][0]]+=j\n        merged.extend(right[j:])\n        return merged\n    counts=[0]*len(nums)\n    merge_sort(list(enumerate(nums)))\n    return counts"
+        },
+        {
+            "title": "Remove Invalid Parentheses",
+            "code": "def removeInvalidParentheses(s):\n    def is_valid(s):\n        count=0\n        for char in s:\n            if char=='(':\n                count+=1\n            elif char==')':\n                count-=1\n                if count<0:\n                    return False\n        return count==0\n    level={s}\n    while True:\n        valid=list(filter(is_valid,level))\n        if valid:\n            return valid\n        next_level=set()\n        for s in level:\n            for i in range(len(s)):\n                if s[i] in '()':\n                    next_level.add(s[:i]+s[i+1:])\n        level=next_level"
+        },
+        {
+            "title": "Longest Increasing Path in a Matrix",
+            "code": "def longestIncreasingPath(matrix):\n    if not matrix:\n        return 0\n    m,n=len(matrix),len(matrix[0])\n    directions=[(0,1),(1,0),(0,-1),(-1,0)]\n    dp=[[0]*n for _ in range(m)]\n    def dfs(i,j):\n        if dp[i][j]:\n            return dp[i][j]\n        max_length=1\n        for dx,dy in directions:\n            x,y=i+dx,j+dy\n            if 0<=x<m and 0<=y<n and matrix[x][y]>matrix[i][j]:\n                max_length=max(max_length,1+dfs(x,y))\n        dp[i][j]=max_length\n        return dp[i][j]\n    result=0\n    for i in range(m):\n        for j in range(n):\n            result=max(result,dfs(i,j))\n    return result"
+        },
+        {
+            "title": "Alien Dictionary",
+            "code": "def alienOrder(words):\n    from collections import defaultdict,deque\n    graph=defaultdict(set)\n    in_degree={char:0 for word in words for char in word}\n    for i in range(len(words)-1):\n        word1,word2=words[i],words[i+1]\n        for j in range(min(len(word1),len(word2))):\n            if word1[j]!=word2[j]:\n                if word2[j] not in graph[word1[j]]:\n                    graph[word1[j]].add(word2[j])\n                    in_degree[word2[j]]+=1\n                break\n        else:\n            if len(word1)>len(word2):\n                return ''\n    queue=deque([char for char in in_degree if in_degree[char]==0])\n    result=''\n    while queue:\n        char=queue.popleft()\n        result+=char\n        for neighbor in graph[char]:\n            in_degree[neighbor]-=1\n            if in_degree[neighbor]==0:\n                queue.append(neighbor)\n    return result if len(result)==len(in_degree) else ''"
+        },
+        {
+            "title": "Best Time to Buy and Sell Stock IV",
+            "code": "def maxProfit(k,prices):\n    if not prices:\n        return 0\n    n=len(prices)\n    if k>=n//2:\n        return sum(max(prices[i+1]-prices[i],0) for i in range(n-1))\n    dp=[[0]*n for _ in range(k+1)]\n    for i in range(1,k+1):\n        max_diff=-prices[0]\n        for j in range(1,n):\n            dp[i][j]=max(dp[i][j-1],prices[j]+max_diff)\n            max_diff=max(max_diff,dp[i-1][j]-prices[j])\n    return dp[k][n-1]"
+        },
+        {
+            "title": "Word Search II",
+            "code": "def findWords(board,words):\n    class TrieNode:\n        def __init__(self):\n            self.children={}\n            self.word=None\n    def build_trie(words):\n        root=TrieNode()\n        for word in words:\n            node=root\n            for char in word:\n                if char not in node.children:\n                    node.children[char]=TrieNode()\n                node=node.children[char]\n            node.word=word\n        return root\n    def dfs(i,j,node):\n        char=board[i][j]\n        if char not in node.children:\n            return\n        node=node.children[char]\n        if node.word:\n            result.append(node.word)\n            node.word=None\n        board[i][j]='#'\n        for dx,dy in [(-1,0),(1,0),(0,-1),(0,1)]:\n            x,y=i+dx,j+dy\n            if 0<=x<m and 0<=y<n and board[x][y]!='#':\n                dfs(x,y,node)\n        board[i][j]=char\n    root=build_trie(words)\n    m,n=len(board),len(board[0])\n    result=[]\n    for i in range(m):\n        for j in range(n):\n            dfs(i,j,root)\n    return result"
+        },
+        {
+            "title": "The Skyline Problem",
+            "code": "def getSkyline(buildings):\n    import heapq\n    events=[]\n    for left,right,height in buildings:\n        events.append((left,-height,right))\n        events.append((right,0,0))\n    events.sort()\n    result=[]\n    heap=[(0,float('inf'))]\n    for x,neg_height,right in events:\n        while x>=heap[0][1]:\n            heapq.heappop(heap)\n        if neg_height:\n            heapq.heappush(heap,(neg_height,right))\n        if not result or result[-1][1]!=-heap[0][0]:\n            result.append([x,-heap[0][0]])\n    return result"
+        },
+        {
+            "title": "Find Median from Data Stream",
+            "code": "import heapq\n\nclass MedianFinder:\n    def __init__(self):\n        self.small=[]  # Max heap (using negative values)\n        self.large=[]  # Min heap\n    def addNum(self,num):\n        heapq.heappush(self.small,-num)\n        heapq.heappush(self.large,-heapq.heappop(self.small))\n        if len(self.small)<len(self.large):\n            heapq.heappush(self.small,-heapq.heappop(self.large))\n    def findMedian(self):\n        if len(self.small)>len(self.large):\n            return -self.small[0]\n        return (-self.small[0]+self.large[0])/2"
+        },
+        {
+            "title": "Russian Doll Envelopes",
+            "code": "def maxEnvelopes(envelopes):\n    envelopes.sort(key=lambda x:(x[0],-x[1]))\n    dp=[]\n    for _,height in envelopes:\n        left,right=0,len(dp)\n        while left<right:\n            mid=(left+right)//2\n            if dp[mid]<height:\n                left=mid+1\n            else:\n                right=mid\n        if right==len(dp):\n            dp.append(height)\n        else:\n            dp[right]=height\n    return len(dp)"
+        }
+    ]
+}
