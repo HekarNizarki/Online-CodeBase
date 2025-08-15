@@ -1,4 +1,4 @@
-# Python Code Snippets Repositor
+# Python Code Snippets Repository
 
 This repository contains a collection of Python code snippets, each solving a specific algorithmic or data structure problem. The code snippets are organized as individual Python files, each named after the problem it addresses (e.g., `3Sum.py`, `Add_Digits.py`).
 
